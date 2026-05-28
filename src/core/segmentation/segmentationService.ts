@@ -15,7 +15,7 @@ export interface SegmentationConfig {
 }
 
 const DEFAULT_CONFIG: SegmentationConfig = {
-  modelUrl: '/models/u2net.onnx',
+  modelUrl: 'https://huggingface.co/nickmuchi/u2net-onnx/resolve/main/u2netp.onnx',
   inputSize: 320,
   threshold: 0.5,
   maxRetries: 3,
@@ -81,8 +81,17 @@ export function preprocessImage(
 }
 
 /**
+ * Applies sigmoid function to convert logits to probabilities.
+ */
+function sigmoid(x: number): number {
+  return 1 / (1 + Math.exp(-x));
+}
+
+/**
  * Postprocesses model output to produce a binary segmentation mask.
- * Thresholds at the configured value, resizes back to original dimensions.
+ * Handles U²-Net output shape [1, 1, H, W] — extracts the spatial map,
+ * applies sigmoid if values are outside [0, 1], thresholds, and resizes
+ * back to original dimensions.
  */
 export function postprocessOutput(
   output: Float32Array,
@@ -91,14 +100,28 @@ export function postprocessOutput(
   originalHeight: number,
   threshold: number
 ): SegmentationMask {
+  const spatialSize = modelOutputSize * modelOutputSize;
+
+  // The output may be [1, 1, H, W]. The spatial data starts at offset 0
+  // regardless of batch/channel dims since both are 1.
+  // Determine if we need sigmoid: check if values are outside [0, 1]
+  let needsSigmoid = false;
+  for (let i = 0; i < Math.min(100, spatialSize); i++) {
+    if (output[i] < -0.01 || output[i] > 1.01) {
+      needsSigmoid = true;
+      break;
+    }
+  }
+
   // Create binary mask at model output resolution
   const modelCanvas = new OffscreenCanvas(modelOutputSize, modelOutputSize);
   const modelCtx = modelCanvas.getContext('2d')!;
   const modelImageData = modelCtx.createImageData(modelOutputSize, modelOutputSize);
 
-  for (let i = 0; i < modelOutputSize * modelOutputSize; i++) {
-    // Apply sigmoid if output is logits, otherwise use directly
-    const value = output[i] > threshold ? 255 : 0;
+  for (let i = 0; i < spatialSize; i++) {
+    const raw = output[i];
+    const prob = needsSigmoid ? sigmoid(raw) : raw;
+    const value = prob > threshold ? 255 : 0;
     modelImageData.data[i * 4] = value;
     modelImageData.data[i * 4 + 1] = value;
     modelImageData.data[i * 4 + 2] = value;
@@ -165,6 +188,7 @@ export class SegmentationServiceImpl implements SegmentationService {
         const ort = await import('onnxruntime-web');
         this.session = await ort.InferenceSession.create(this.config.modelUrl, {
           executionProviders: ['wasm'],
+          graphOptimizationLevel: 'all',
         });
         this.ready = true;
         this.useFallback = false;
@@ -237,7 +261,7 @@ export class SegmentationServiceImpl implements SegmentationService {
     // Preprocess: resize to inputSize x inputSize, normalize, NCHW
     const inputTensor = preprocessImage(imageData, inputSize);
 
-    // Create ONNX tensor
+    // Create ONNX tensor [1, 3, 320, 320]
     const tensor = new ort.Tensor('float32', inputTensor, [1, 3, inputSize, inputSize]);
 
     // Run inference
@@ -247,14 +271,22 @@ export class SegmentationServiceImpl implements SegmentationService {
     const feeds: Record<string, unknown> = { [inputName]: tensor };
     const results = await session.run(feeds);
 
-    // Get the first output (U²-Net outputs multiple maps, use the first/finest)
+    // U²-Net outputs multiple maps (d0-d6). The first output (d0) is the finest.
+    // Output shape is [1, 1, 320, 320] — a single-channel probability map.
     const outputName = session.outputNames[0];
     const outputTensor = results[outputName];
     const outputData = outputTensor.data as Float32Array;
 
+    // The output is [1, 1, H, W]. Since batch=1 and channels=1,
+    // the spatial data is the first inputSize*inputSize elements.
+    const spatialSize = inputSize * inputSize;
+    const spatialData = outputData.length > spatialSize
+      ? outputData.slice(0, spatialSize)
+      : outputData;
+
     // Postprocess: threshold and resize back to original dimensions
     return postprocessOutput(
-      outputData,
+      spatialData,
       inputSize,
       imageData.width,
       imageData.height,

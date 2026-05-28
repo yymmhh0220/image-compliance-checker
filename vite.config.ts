@@ -6,6 +6,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/image-compliance-checker/',
   plugins: [react()],
+  optimizeDeps: {
+    exclude: ['onnxruntime-web'],
+  },
   test: {
     globals: true,
     environment: 'jsdom',

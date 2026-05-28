@@ -74,10 +74,21 @@ function App() {
   const [correctedImageUrl, setCorrectedImageUrl] = useState<string | undefined>(undefined);
 
   // Initialize segmentation service on mount
+  const [modelLoading, setModelLoading] = useState(true);
+  const [modelFallback, setModelFallback] = useState(false);
+
   useEffect(() => {
-    segmentationService.initialize().catch((err) => {
-      console.warn('Segmentation service initialization failed, using fallback:', err);
-    });
+    segmentationService.initialize()
+      .then(() => {
+        setModelFallback(segmentationService.isUsingFallback());
+      })
+      .catch((err) => {
+        console.warn('Segmentation service initialization failed, using fallback:', err);
+        setModelFallback(true);
+      })
+      .finally(() => {
+        setModelLoading(false);
+      });
   }, []);
 
   // Watch for new images being added and auto-trigger analysis
@@ -442,6 +453,22 @@ function App() {
         {/* Idle / Upload phase - always show upload area unless editing */}
         {phase !== 'editing' && (
           <div className="space-y-6">
+            {/* Model loading indicator */}
+            {modelLoading && (
+              <div className="flex items-center justify-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-700">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                {t('common.loading', 'Loading segmentation model...')}
+              </div>
+            )}
+            {!modelLoading && modelFallback && (
+              <div className="flex items-center justify-center gap-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md text-xs text-yellow-700">
+                ⚠️ {t('common.fallbackMode', 'Using basic segmentation (model unavailable). Results may be less accurate.')}
+              </div>
+            )}
+
             {/* Upload Area - always visible for adding more images */}
             {(phase === 'idle' || images.length === 0) && (
               <UploadArea />
