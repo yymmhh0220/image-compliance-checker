@@ -1,0 +1,89 @@
+{
+  "common": {
+    "appTitle": "画像コンプライアンスチェッカー",
+    "language": "言語",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "save": "保存",
+    "download": "ダウンロード",
+    "retry": "再試行",
+    "back": "戻る",
+    "analyzing": "分析中..."
+  },
+  "upload": {
+    "title": "画像をアップロード",
+    "dragText": "ここに画像をドラッグ",
+    "clickText": "またはクリックしてファイルを選択",
+    "formatError": "サポートされていないファイル形式",
+    "sizeError": "ファイルサイズが制限を超えています（最大20MB）",
+    "batchLimitError": "一括アップロードは最大20枚まで",
+    "supportedFormats": "対応形式：JPEG、PNG、WebP"
+  },
+  "report": {
+    "title": "コンプライアンスレポート",
+    "compliant": "準拠",
+    "nonCompliant": "非準拠",
+    "suggestion": "修正提案",
+    "autoFix": "自動修正",
+    "manualEdit": "手動編集",
+    "fixAll": "すべて一括修正"
+  },
+  "analyzer": {
+    "size": "画像サイズ",
+    "background": "背景色",
+    "coverage": "商品占有率",
+    "text": "テキストとマーク",
+    "multiView": "マルチビュー検出"
+  },
+  "corrector": {
+    "replaceBackground": "背景を自動修正",
+    "resizeImage": "サイズを自動調整",
+    "adjustCoverage": "占有率を自動調整",
+    "fixAll": "すべて一括修正",
+    "beforeAfter": "修正前後の比較",
+    "manualEdit": "手動編集",
+    "downloadCorrected": "修正画像をダウンロード",
+    "processing": "処理中...",
+    "before": "修正前",
+    "after": "修正後"
+  },
+  "editor": {
+    "brush": "ブラシ",
+    "eraser": "消しゴム",
+    "smartFill": "スマート塗りつぶし",
+    "undo": "元に戻す",
+    "redo": "やり直し",
+    "zoomIn": "拡大",
+    "zoomOut": "縮小",
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+  "export": {
+    "title": "画像をエクスポート",
+    "format": "エクスポート形式",
+    "quality": "画質",
+    "fileName": "ファイル名",
+    "estimatedSize": "推定ファイルサイズ",
+    "exportButton": "エクスポート",
+    "batchExport": "一括エクスポート",
+    "success": "エクスポート成功"
+  },
+  "rules": {
+    "sizeRule": "画像の長辺は1000ピクセル以上必要",
+    "backgroundRule": "背景は純白（RGB各チャンネル≥250）が必要",
+    "coverageRule": "商品占有率は85%以上必要",
+    "textRule": "テキスト、URL、価格、QRコード等を含めないこと",
+    "multiViewRule": "メイン画像は単一ビューであること"
+  },
+  "preview": {
+    "selectImage": "画像を選択してください",
+    "noImages": "画像がありません"
+  },
+  "layout": {
+    "rulesTitle": "Amazon メイン画像コンプライアンスルール",
+    "rulesDescription": "メイン画像の要件：純白背景、長辺≥1000px、商品占有率85%-100%、テキスト/URL/価格/QRコード禁止、単一ビューのみ。"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "common": {
+    "appTitle": "Image Compliance Checker",
+    "language": "Language",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "download": "Download",
+    "retry": "Retry",
+    "back": "Back",
+    "analyzing": "Analyzing..."
+  },
+  "upload": {
+    "title": "Upload Images",
+    "dragText": "Drag images here",
+    "clickText": "or click to select files",
+    "formatError": "Unsupported file format",
+    "sizeError": "File size exceeds limit (max 20MB)",
+    "batchLimitError": "Batch upload supports up to 20 images",
+    "supportedFormats": "Supported formats: JPEG, PNG, WebP"
+  },
+  "report": {
+    "title": "Compliance Report",
+    "compliant": "Compliant",
+    "nonCompliant": "Non-compliant",
+    "suggestion": "Suggestion",
+    "autoFix": "Auto Fix",
+    "manualEdit": "Manual Edit",
+    "fixAll": "Fix All"
+  },
+  "analyzer": {
+    "size": "Image Size",
+    "background": "Background Color",
+    "coverage": "Product Coverage",
+    "text": "Text and Marks",
+    "multiView": "Multi-view Detection"
+  },
+  "corrector": {
+    "replaceBackground": "Auto Fix Background",
+    "resizeImage": "Auto Resize",
+    "adjustCoverage": "Auto Adjust Coverage",
+    "fixAll": "Fix All Issues",
+    "beforeAfter": "Before/After Comparison",
+    "manualEdit": "Manual Edit",
+    "downloadCorrected": "Download Corrected Image",
+    "processing": "Processing...",
+    "before": "Before",
+    "after": "After"
+  },
+  "editor": {
+    "brush": "Brush",
+    "eraser": "Eraser",
+    "smartFill": "Smart Fill",
+    "undo": "Undo",
+    "redo": "Redo",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "export": {
+    "title": "Export Image",
+    "format": "Export Format",
+    "quality": "Image Quality",
+    "fileName": "File Name",
+    "estimatedSize": "Estimated File Size",
+    "exportButton": "Export",
+    "batchExport": "Batch Export",
+    "success": "Export successful"
+  },
+  "rules": {
+    "sizeRule": "Image longest edge must be ≥ 1000 pixels",
+    "backgroundRule": "Background must be pure white (RGB channels ≥ 250)",
+    "coverageRule": "Product coverage must be ≥ 85%",
+    "textRule": "Must not contain text, URLs, prices, QR codes, etc.",
+    "multiViewRule": "Main image should be a single view"
+  },
+  "preview": {
+    "selectImage": "Select an image",
+    "noImages": "No images"
+  },
+  "layout": {
+    "rulesTitle": "Amazon Main Image Compliance Rules",
+    "rulesDescription": "Main images must meet: pure white background, longest edge ≥ 1000px, product coverage 85%-100%, no text/URLs/prices/QR codes, single view only."
+  }
+}
